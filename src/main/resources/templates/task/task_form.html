@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>タスクを追加</title>
+  <link rel="stylesheet" th:href="@{/css/task_form.css}" href="/css/task_form.css">
+</head>
+<body>
+  <main class="page">
+    <div class="container">
+      <form th:action="@{/tasks/save}" method="post" th:object="${task}" class="card form" novalidate>
+        <h1 class="title">タスクを追加</h1>
+
+        <div class="row">
+          <label for="title" class="label">タイトル <span class="label-required" aria-hidden="true">※</span></label>
+          <input id="title" type="text" th:field="*{title}" placeholder="例：買い物" class="input" required aria-required="true" />
+        </div>
+
+        <div class="grid">
+          <div class="col">
+            <label for="dueDate" class="label">日付</label>
+            <input id="dueDate" type="date" name="dueDate" th:value="${task.dueDate}" class="input" required />
+          </div>
+
+          <div class="col">
+            <label for="dueTime" class="label">時間</label>
+            <input id="dueTime" type="time" th:field="*{dueTime}" class="input" />
+          </div>
+        </div>
+
+        <div class="row">
+          <label for="description" class="label">内容</label>
+          <textarea id="description" th:field="*{description}" placeholder="詳細を入力" class="textarea" rows="4"></textarea>
+        </div>
+
+        <div class="actions">
+			<a class="btn btn-cancel" th:href="@{/tasks/date/{date}(date=${task.dueDate})}" aria-label="キャンセルしてタスク一覧に戻る">キャンセル</a>          <button type="submit" class="btn btn-primary" aria-label="保存">保存</button>
+        </div>
+      </form>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>期限が近いタスク</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 10px; }
+        th { background: #f5f5f5; }
+        h1 { text-align: center; }
+        .nav { text-align: center; margin-top: 15px; }
+        .nav a { margin: 0 10px; }
+    </style>
+</head>
+<body>
+
+<h1>期限が近いタスク一覧</h1>
+
+<div class="nav">
+    <a href="/tasks/calendar">カレンダー表示へ戻る</a>
+</div>
+
+<table>
+    <thead>
+    <tr>
+        <th>タイトル</th>
+        <th>期限</th>
+        <th>詳細</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="task : ${tasks}">
+        <td th:text="${task.title}"></td>
+        <td th:text="${task.dueDate}"></td>
+        <td><a th:href="@{/tasks/detail/{id}(id=${task.id})}">詳細</a></td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

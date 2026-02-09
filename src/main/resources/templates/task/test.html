@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title th:text="${selectedDate} + ' のタスク一覧'">タスク一覧</title>
+
+  <!-- フォント（任意） -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <!-- スタイル -->
+  <style>
+	  :root{
+  --bg: #0f1724;
+  --card: #ffffff;
+  --muted: #f1f5f9;
+  --text: #0b1220;
+  --accent: #6d28d9;
+  --accent-2: #06b6d4;
+  --glass: rgba(255,255,255,0.06);
+  --radius: 12px;
+  --shadow: 0 6px 18px rgba(11,18,32,0.08);
+  --blur: 8px;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+/* Light / Dark support */
+@media (prefers-color-scheme: light){
+  :root{
+    --bg:#f6f8fb;
+    --card:#ffffff;
+    --muted:#e6eef8;
+    --text:#0b1220;
+    --glass: rgba(11,18,32,0.03);
+    --shadow: 0 10px 30px rgba(11,18,32,0.06);
+  }
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg: #071025;
+    --card: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+    --muted: #0b1220;
+    --text: #e6eef8;
+    --glass: rgba(255,255,255,0.02);
+    --shadow: 0 10px 30px rgba(2,6,23,0.6);
+  }
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  background: linear-gradient(180deg, var(--bg) 0%, color-mix(in srgb, var(--bg) 50% , #ffffff00) 100%);
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  padding:28px;
+}
+
+/* Topbar */
+.topbar{
+  max-width:1200px;
+  margin:0 auto 18px auto;
+}
+.topbar-inner{
+  display:flex;
+  gap:16px;
+  align-items:flex-start;
+  justify-content:space-between;
+  margin-bottom:12px;
+}
+.title-area .page-title{
+  margin:0;
+  font-size:1.4rem;
+  font-weight:700;
+  letter-spacing:-0.2px;
+}
+.title-area .subtitle{
+  margin:6px 0 0 0;
+  font-size:0.875rem;
+  color:color-mix(in srgb, var(--text) 65%, transparent);
+}
+
+/* Controls */
+.controls{display:flex; gap:10px; align-items:center}
+.btn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 12px;
+  border-radius:10px;
+  text-decoration:none;
+  font-weight:600;
+  font-size:0.95rem;
+  border:1px solid transparent;
+  cursor:pointer;
+}
+.btn:focus{outline:3px solid color-mix(in srgb, var(--accent) 20%, white); outline-offset:2px}
+.btn-primary{
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));
+  color:white;
+  box-shadow:var(--shadow);
+}
+.btn-ghost{
+  background:transparent;
+  color:color-mix(in srgb, var(--text) 70%, transparent);
+  border-radius:8px;
+  padding:8px 10px;
+}
+.btn-outline{
+  background:transparent;
+  border:1px solid color-mix(in srgb, var(--text) 10%, transparent);
+  padding:8px 10px;
+}
+
+/* Toolbar */
+.toolbar{
+  max-width:1200px;
+  margin:0 auto 18px auto;
+  display:flex;
+  gap:12px;
+  align-items:center;
+  justify-content:space-between;
+}
+.search{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  background:var(--card);
+  padding:8px 10px;
+  border-radius:10px;
+  box-shadow:var(--shadow);
+  min-width:220px;
+}
+.search input{
+  border:0;
+  outline:none;
+  background:transparent;
+  font-size:0.95rem;
+  width:220px;
+}
+.icon{width:18px;height:18px;fill:color-mix(in srgb, var(--text) 55%, transparent)}
+.icon-btn{
+  background:var(--card);
+  border:0;
+  padding:8px;
+  border-radius:8px;
+  cursor:pointer;
+  display:inline-grid;
+  place-items:center;
+  box-shadow:var(--shadow);
+}
+.icon-btn svg{width:18px;height:18px;fill:color-mix(in srgb, var(--text) 60%, transparent)}
+.icon-btn.active, .icon-btn[aria-pressed="true"]{
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));
+}
+.icon-btn.active svg, .icon-btn[aria-pressed="true"] svg{fill:white}
+
+/* Container */
+.container{
+  max-width:1200px;
+  margin:0 auto;
+}
+
+/* Stats */
+.stats{
+  display:flex;
+  gap:12px;
+  margin-bottom:12px;
+}
+.stat{
+  background:var(--card);
+  padding:12px 16px;
+  border-radius:10px;
+  box-shadow:var(--shadow);
+  min-width:120px;
+}
+.stat-number{font-weight:700; font-size:1.2rem}
+.stat-label{font-size:0.85rem; color:color-mix(in srgb, var(--text) 65%, transparent)}
+
+/* Tasks list/cards */
+.tasks{
+  display:grid;
+  gap:12px;
+  grid-template-columns:1fr;
+}
+.task-card{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  background:var(--card);
+  padding:14px;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  transition:transform .18s ease, box-shadow .18s ease;
+  border:1px solid rgba(0,0,0,0.03);
+}
+.task-card:hover{transform:translateY(-6px)}
+.task-left{display:flex;gap:12px;align-items:flex-start;flex:1}
+.task-time{
+  min-width:72px;
+  text-align:center;
+  font-weight:700;
+  color:var(--accent);
+  background:color-mix(in srgb, var(--accent) 10%, transparent);
+  padding:8px 10px;
+  border-radius:10px;
+}
+.task-title{margin:0; font-size:1rem; font-weight:700}
+.task-desc{margin:6px 0 0 0; color:color-mix(in srgb, var(--text) 60%, transparent); font-size:0.95rem}
+
+/* Actions */
+.task-actions{display:flex;gap:8px;align-items:center}
+
+/* Empty state */
+.empty{
+  display:flex;
+  gap:18px;
+  align-items:center;
+  justify-content:center;
+  padding:28px;
+  text-align:center;
+  background:linear-gradient(180deg, var(--glass), transparent);
+  border-radius:12px;
+}
+.empty-art svg{width:120px;height:80px;opacity:0.95}
+.empty-text h3{margin:0 0 6px 0}
+.empty-text p{margin:0 0 12px 0; color:color-mix(in srgb, var(--text) 60%, transparent)}
+
+/* Responsive: grid view (cards) */
+@media (min-width:720px){
+  .tasks{grid-template-columns:repeat(2,1fr)}
+  .task-card.card-view{grid-column:auto}
+}
+@media (min-width:980px){
+  .tasks{grid-template-columns:repeat(3,1fr)}
+}
+
+/* List view: make cards full width with compact layout */
+.icon-btn ~ .active + * {} /* placeholder */
+.list-view .tasks{grid-template-columns:1fr}
+.list-view .task-card{align-items:center}
+.list-view .task-desc{display:block}
+
+/* Small screens */
+@media (max-width:640px){
+  .topbar-inner{flex-direction:column;align-items:stretch}
+  .controls{justify-content:flex-end}
+  .toolbar{flex-direction:column;align-items:stretch;gap:10px}
+  .search input{width:120px}
+  .tasks{grid-template-columns:1fr}
+}
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="topbar" role="banner">
+      <div class="topbar-inner">
+        <div class="title-area">
+          <h1 class="page-title" th:text="${selectedDate} + ' のタスク'">タスク一覧</h1>
+          <p class="subtitle">その日の予定を素早く確認・編集できます</p>
+        </div>
+
+        <div class="controls" role="navigation" aria-label="ページ操作">
+          <a th:href="@{/tasks/calendar(year=${selectedDate.year}, month=${selectedDate.monthValue})}" class="btn btn-ghost" aria-label="カレンダーに戻る">← カレンダー</a>
+          <a th:href="@{'/tasks/add'(date=${selectedDate})}" class="btn btn-primary" aria-label="タスクを追加">✚ タスクを追加</a>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <label class="search">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79L20 21.5 21.5 20l-6-6z" /></svg>
+            <input id="task-search" type="search" placeholder="検索（タイトル・説明）" aria-label="タスク検索">
+          </label>
+        </div>
+
+        <div class="toolbar-right">
+          <div class="view-toggle" role="group" aria-label="表示切替">
+            <button id="btn-grid" class="icon-btn" title="カード表示" aria-pressed="false" aria-label="カード表示">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3h8v8H3zM13 3h8v8h-8zM3 13h8v8H3zM13 13h8v8h-8z"/></svg>
+            </button>
+            <button id="btn-list" class="icon-btn active" title="リスト表示" aria-pressed="true" aria-label="リスト表示">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13h18v-2H3v2zm0 6h18v-2H3v2zM3 7h18V5H3v2z"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container" role="main">
+      <section class="stats" aria-hidden="true">
+        <div class="stat">
+          <div class="stat-number" th:text="${tasks.size()}">0</div>
+          <div class="stat-label">合計タスク</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number" th:text="${#lists.isEmpty(tasks) ? 0 : 0}">0</div>
+          <div class="stat-label">完了済み（将来実装）</div>
+        </div>
+      </section>
+
+      <section class="tasks" id="tasks-list" aria-live="polite">
+        <!-- 繰り返し: タスクカード（カード表示 / リスト表示両対応） -->
+        <article class="task-card" th:each="task : ${tasks}" th:attr="data-title=${task.title}, data-desc=${task.description}">
+          <div class="task-left">
+            <div class="task-time" th:text="${task.dueTime}">10:00</div>
+            <h3 class="task-title" th:text="${task.title}">タスク名</h3>
+            <p class="task-desc" th:text="${task.description}">詳細</p>
+          </div>
+
+          <div class="task-actions">
+            <a th:href="@{/tasks/edit/{id}(id=${task.id})}" class="btn btn-outline" aria-label="編集">編集</a>
+            <!-- 将来的に完了APIがあるならここに配置 -->
+          </div>
+        </article>
+
+        <!-- 空状態 -->
+        <div class="empty" th:if="${#lists.isEmpty(tasks)}">
+          <div class="empty-art">
+            <!-- シンプルなSVGイラスト -->
+            <svg viewBox="0 0 120 80" aria-hidden="true">
+              <rect x="6" y="18" width="108" height="52" rx="8" fill="var(--muted)"/>
+              <rect x="18" y="30" width="30" height="6" rx="3" fill="var(--bg)"/>
+              <rect x="18" y="40" width="64" height="6" rx="3" fill="var(--bg)"/>
+              <circle cx="95" cy="40" r="9" fill="var(--accent)"/>
+            </svg>
+          </div>
+          <div class="empty-text">
+            <h3>この日はタスクがありません</h3>
+            <p>新しいタスクを追加して予定を整理しましょう。</p>
+            <a th:href="@{'/tasks/add'(date=${selectedDate})}" class="btn btn-primary">タスクを追加</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+		document.addEventListener('DOMContentLoaded', () => {
+  const btnGrid = document.getElementById('btn-grid');
+  const btnList = document.getElementById('btn-list');
+  const tasksSection = document.querySelector('.tasks');
+  const searchInput = document.getElementById('task-search');
+  const page = document.querySelector('.page');
+
+  // 初期表示: リスト表示（btn-list に active が付いている想定）
+  function setView(view){
+    if(view === 'grid'){
+      btnGrid.classList.add('active');
+      btnGrid.setAttribute('aria-pressed','true');
+      btnList.classList.remove('active');
+      btnList.setAttribute('aria-pressed','false');
+      page.classList.remove('list-view');
+      page.classList.add('grid-view');
+    }else{
+      btnList.classList.add('active');
+      btnList.setAttribute('aria-pressed','true');
+      btnGrid.classList.remove('active');
+      btnGrid.setAttribute('aria-pressed','false');
+      page.classList.remove('grid-view');
+      page.classList.add('list-view');
+    }
+  }
+
+  btnGrid.addEventListener('click', () => setView('grid'));
+  btnList.addEventListener('click', () => setView('list'));
+
+  // 検索フィルタ（タイトル・説明）
+  function filterTasks(){
+    const q = (searchInput.value || '').trim().toLowerCase();
+    const items = document.querySelectorAll('.task-card');
+    items.forEach(item=>{
+      const title = (item.getAttribute('data-title')||'').toLowerCase();
+      const desc = (item.getAttribute('data-desc')||'').toLowerCase();
+      if(!q || title.includes(q) || desc.includes(q)){
+        item.style.display = '';
+      }else{
+        item.style.display = 'none';
+      }
+    });
+
+    // 空表示の判定: 全て非表示なら .empty を表示（サーバー側で空判定している場合は不要）
+    const visible = Array.from(items).some(i=> i.style.display !== 'none');
+    const emptyBlock = document.querySelector('.empty');
+    if(emptyBlock){
+      emptyBlock.style.display = visible ? 'none' : 'flex';
+    }
+  }
+
+  searchInput.addEventListener('input', filterTasks);
+  // Enterでフォーカスを外してアクセシビリティ向上
+  searchInput.addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter') e.target.blur();
+  });
+
+  // 初期化
+  setView(btnList.classList.contains('active') ? 'list' : 'grid');
+});
+	</script>
+  </div>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>AI学習計画生成</title>
+    <link rel="stylesheet" th:href="@{/css/ai_plan.css}">
+</head>
+<body>
+    <h1>🤖 AIに学習計画を作ってもらう</h1>
+    
+    <div th:if="${error}" class="error" th:text="${error}"></div>
+    
+    <form th:action="@{/tasks/generate-plan}" method="post">
+        <div class="form-group">
+            <label for="goal">達成したい目標を入力してください：</label>
+            <input type="text" 
+                   id="goal" 
+                   name="goal" 
+                   placeholder="例: 基本情報技術者試験に合格したい" 
+                   required />
+            <div class="examples">
+                <strong>例：</strong><br>
+                ・基本情報技術者試験に合格したい<br>
+                ・TOEICで800点を取りたい<br>
+                ・Webアプリ開発のスキルを身につけたい
+            </div>
+        </div>
+
+        <div class="options-group">
+            <div class="form-group">
+                <label for="weeklyFrequency">週に何回取り組みますか？</label>
+                <select id="weeklyFrequency" name="weeklyFrequency">
+                    <option value="1">週1回</option>
+                    <option value="2">週2回</option>
+                    <option value="3" selected>週3回</option>
+                    <option value="4">週4回</option>
+                    <option value="5">週5回</option>
+                    <option value="6">週6回</option>
+                    <option value="7">毎日</option>
+                </select>
+                <div class="help-text">学習・作業の頻度を設定します</div>
+            </div>
+
+            <div class="form-group">
+                <label for="deadlineWeeks">期限までの期間は？</label>
+                <select id="deadlineWeeks" name="deadlineWeeks">
+                    <option value="1">1週間</option>
+                    <option value="2">2週間</option>
+                    <option value="4" selected>1ヶ月</option>
+                    <option value="8">2ヶ月</option>
+                    <option value="12">3ヶ月</option>
+                    <option value="24">6ヶ月</option>
+                    <option value="52">1年</option>
+                </select>
+                <div class="help-text">目標達成までの期間を設定します</div>
+            </div>
+        </div>
+        
+        <button type="submit">📝 計画を生成</button>
+        <a th:href="@{/tasks/calendar}" class="cancel-link">キャンセル</a>
+    </form>
+    <script th:src="@{/js/ai_plan.js}"></script>
+</body>
+</html>

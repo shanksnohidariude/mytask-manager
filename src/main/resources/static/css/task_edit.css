@@ -1,0 +1,187 @@
+/* task_edit.css
+   - 外部CSSに分離
+   - レスポンシブ / ダークモード / アクセシビリティ対応
+   - 既存の Thymeleaf 構造から大きく逸脱しないデザイン
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+:root{
+  --bg: #f6f9fc;
+  --card: #ffffff;
+  --muted: #6b7280;
+  --text: #0b1220;
+  --accent: #2563eb;
+  --accent-2: #06b6d4;
+  --danger: #ef4444;
+  --radius: 12px;
+  --shadow: 0 10px 30px rgba(11,18,32,0.06);
+  --focus: rgba(37,99,235,0.14);
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg: #071025;
+    --card: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    --muted: #9aa4b2;
+    --text: #e6eef8;
+    --shadow: 0 10px 30px rgba(2,6,23,0.6);
+    --focus: rgba(6,182,212,0.12);
+  }
+}
+
+/* Page layout */
+html,body{height:100%}
+body{
+  margin:0;
+  padding:28px;
+  background: linear-gradient(180deg,var(--bg), color-mix(in srgb,var(--bg) 90%, #ffffff00));
+  color:var(--text);
+  font-size:15px;
+  line-height:1.45;
+}
+
+/* Topbar */
+.topbar{
+  max-width:900px;
+  margin:0 auto 18px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.back{
+  color:var(--muted);
+  text-decoration:none;
+  padding:8px 10px;
+  border-radius:8px;
+  border:1px solid transparent;
+}
+.back:hover{ background: color-mix(in srgb, var(--bg) 6%, transparent) }
+
+/* Page container */
+.page{
+  max-width:900px;
+  margin:0 auto;
+}
+
+/* Card */
+.card{
+  background:var(--card);
+  border-radius:14px;
+  padding:20px;
+  box-shadow:var(--shadow);
+  border:1px solid color-mix(in srgb, var(--text) 6%, transparent);
+}
+
+/* Hidden heading for screen readers */
+.visually-hidden{
+  position:absolute !important;
+  width:1px;height:1px;
+  padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;
+}
+
+/* Form */
+.form{ display:flex; flex-direction:column; gap:12px; }
+
+/* Grid for compact inputs */
+.grid{
+  display:grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap:12px;
+}
+
+/* For small screens, single column */
+@media (max-width:640px){
+  .grid{ grid-template-columns: 1fr; }
+}
+
+/* Field */
+.field{ display:flex; flex-direction:column; gap:6px; }
+.field label{
+  font-weight:700;
+  color:var(--text);
+}
+.field input[type="text"],
+.field input[type="date"],
+.field input[type="time"],
+.field select,
+.field textarea{
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px solid color-mix(in srgb, var(--text) 6%, transparent);
+  background:transparent;
+  color:var(--text);
+  font-size:0.98rem;
+  outline:none;
+  transition: box-shadow .12s ease, border-color .12s ease;
+  box-sizing:border-box;
+}
+.field input::placeholder{ color: color-mix(in srgb, var(--muted) 60%, transparent) }
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus{
+  box-shadow:0 8px 24px var(--focus);
+  border-color: var(--accent);
+}
+
+/* textarea */
+.field textarea{
+  min-height:120px;
+  resize:vertical;
+}
+
+/* Required mark */
+.required{ color:var(--danger); margin-left:4px; font-weight:700 }
+
+/* Actions */
+.form-actions{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  margin-top:6px;
+}
+.inline-form{ display:inline-block; margin:0; }
+
+/* Buttons */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 14px;
+  border-radius:10px;
+  font-weight:700;
+  text-decoration:none;
+  cursor:pointer;
+  border:0;
+}
+.btn-save{
+  background: linear-gradient(90deg,var(--accent), var(--accent-2));
+  color:white;
+  box-shadow: 0 12px 30px rgba(37,99,235,0.12);
+}
+.btn-delete{
+  background:transparent;
+  color:var(--danger);
+  border:1px solid color-mix(in srgb, var(--danger) 16%, transparent);
+  padding:8px 12px;
+}
+.btn-cancel{
+  background:transparent;
+  color:var(--muted);
+  border:1px solid color-mix(in srgb, var(--text) 6%, transparent);
+  padding:8px 12px;
+}
+.btn:focus{ outline:3px solid color-mix(in srgb, var(--accent) 18%, transparent); outline-offset:3px }
+.btn-save:hover{ transform: translateY(-3px); transition: transform .12s ease; }
+
+/* Help footer */
+.help{ margin-top:12px; color:var(--muted); font-size:0.92rem }
+
+/* Small utilities */
+.center{ text-align:center }
+.text-muted{ color:var(--muted) }

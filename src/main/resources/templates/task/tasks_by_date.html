@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${selectedDate} + ' のタスク一覧'">タスク一覧</title>
+    <link rel="stylesheet" th:href="@{/css/tasks_by_date.css}">
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1 th:text="${selectedDate} + ' のタスク'">タスク一覧</h1>
+        <div class="header-actions">
+            <a th:href="@{/tasks/calendar(year=${selectedDate.year}, month=${selectedDate.monthValue})}" 
+               class="btn btn-back">
+                ← カレンダーに戻る
+            </a>
+            <a th:href="@{'/tasks/add'(date=${selectedDate})}" 
+               class="btn btn-add">
+                ✚ タスクを追加
+            </a>
+        </div>
+    </div>
+
+    <div class="task-card">
+        <table class="task-table">
+            <thead>
+                <tr>
+                    <th>タスク名</th>
+                    <th>時間</th>
+                    <th>詳細</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="task : ${tasks}">
+                    <td>
+                        <span class="task-title" th:text="${task.title}">タスク名</span>
+                    </td>
+                    <td>
+                        <span class="task-time" th:text="${task.dueTime}">期限</span>
+                    </td>
+                    <td>
+                        <span class="task-description" th:text="${task.description}">詳細</span>
+                    </td>
+                    <td>
+                        <a th:href="@{/tasks/edit/{id}(id=${task.id})}" class="btn btn-edit">
+                            詳細
+                        </a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(tasks)}">
+                    <td colspan="4">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📭</div>
+                            <div class="empty-state-text">この日はタスクがありません</div>
+                            <div class="empty-state-subtext">新しいタスクを追加してみましょう</div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>AI生成タスク確認</title>
+    <link rel="stylesheet" th:href="@{/css/ai_plan_confirm.css}">
+</head>
+<body>
+    <h1>🤖 AI生成タスク確認</h1>
+    
+    <div class="goal-info">
+        <strong>目標:</strong> <span th:text="${goal}"></span>
+    </div>
+    
+    <div class="task-count">
+        <h2>生成されたタスク一覧 (<span id="task-count" th:text="${#lists.size(tasks)}"></span>個)</h2>
+    </div>
+    
+    <form id="taskForm" th:action="@{/tasks/save-generated-tasks}" method="post">
+        <div class="task-list" id="taskList">
+            <div class="task-item" th:each="task, iterStat : ${tasks}" th:attr="data-index=${iterStat.index}">
+                <div class="task-header">
+                    <span class="task-number" th:text="${iterStat.count} + '.'"></span>
+                    <div class="task-actions">
+                        <button type="button" class="btn-delete" onclick="deleteTask(this)">🗑️ 削除</button>
+                    </div>
+                </div>
+                
+                <div class="task-field">
+                    <label>タスク名</label>
+                    <input type="text" 
+                           th:name="'tasks[' + ${iterStat.index} + '].title'" 
+                           th:value="${task.title}" 
+                           required />
+                </div>
+                
+                <div class="task-field">
+                    <label>詳細説明</label>
+                    <textarea th:name="'tasks[' + ${iterStat.index} + '].description'" 
+                              th:text="${task.description}"></textarea>
+                </div>
+                
+                <div class="task-field">
+                    <label>期限日</label>
+                    <input type="date" 
+                           th:name="'tasks[' + ${iterStat.index} + '].dueDate'" 
+                           th:value="${task.dueDate}" 
+                           required />
+                </div>
+            </div>
+        </div>
+        
+        <div class="button-group">
+            <button type="submit" class="btn-save">✅ これらのタスクを追加する</button>
+            <button type="button" class="btn-cancel" onclick="location.href='/tasks/ai-plan'">❌ キャンセルして戻る</button>
+        </div>
+    </form>
+    <script th:src="@{/js/ai_plan_confirm.js}"></script>
+ </body>
+</html>

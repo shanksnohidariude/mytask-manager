@@ -1,0 +1,177 @@
+/* ai-plan.css
+   - 元の HTML 構造はそのまま
+   - モダンなフォーム、レスポンシブ、ダークモード、アクセシビリティ強化
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+:root{
+  --bg: #f6f8fb;
+  --card: #ffffff;
+  --muted: #6b7280;
+  --text: #0b1220;
+  --accent: #2563eb;
+  --accent-2: #06b6d4;
+  --focus: rgba(37,99,235,0.18);
+  --danger: #ef4444;
+  --radius: 12px;
+  --shadow: 0 10px 30px rgba(11,18,32,0.06);
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg: #071025;
+    --card: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    --muted: #9aa4b2;
+    --text: #e6eef8;
+    --shadow: 0 10px 30px rgba(2,6,23,0.6);
+    --focus: rgba(6,182,212,0.14);
+  }
+}
+
+/* Page */
+html,body{height:100%}
+body{
+  margin:0;
+  padding:32px;
+  background: linear-gradient(180deg, var(--bg), color-mix(in srgb, var(--bg) 92%, #ffffff00));
+  color:var(--text);
+  font-size:15px;
+  line-height:1.45;
+}
+
+/* Title */
+h1{
+  margin:0 0 16px 0;
+  font-size:1.5rem;
+  letter-spacing:-0.3px;
+}
+
+/* Error box (if shown by server) */
+.error{
+  margin:10px 0 18px 0;
+  padding:12px 14px;
+  background:linear-gradient(180deg, rgba(239,68,68,0.06), rgba(239,68,68,0.02));
+  border:1px solid rgba(239,68,68,0.12);
+  color:var(--danger);
+  border-radius:10px;
+  box-shadow:var(--shadow);
+}
+
+/* Form container: keep compact & centered */
+form{
+  max-width:900px;
+  margin-top:8px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+/* Form group */
+.form-group{
+  background:var(--card);
+  padding:12px 14px;
+  border-radius:12px;
+  box-shadow:var(--shadow);
+  border:1px solid color-mix(in srgb, var(--text) 6%, transparent);
+}
+
+/* Label */
+.form-group label{
+  display:block;
+  font-weight:700;
+  margin-bottom:8px;
+  color:var(--text);
+}
+
+/* Input / Select / Textarea */
+.form-group input[type="text"],
+.form-group select,
+.form-group textarea{
+  width:100%;
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px solid color-mix(in srgb, var(--text) 6%, transparent);
+  background:transparent;
+  color:var(--text);
+  font-size:0.98rem;
+  outline:none;
+  box-sizing:border-box;
+  transition:box-shadow .12s ease, border-color .12s ease;
+}
+.form-group input::placeholder{ color: color-mix(in srgb, var(--muted) 60%, transparent) }
+
+/* Focus */
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus{
+  box-shadow:0 8px 24px var(--focus);
+  border-color: var(--accent);
+}
+
+/* Examples helper */
+.examples{
+  margin-top:8px;
+  color:var(--muted);
+  font-size:0.95rem;
+  line-height:1.4;
+}
+
+/* Options group: responsive two-column */
+.options-group{
+  display:grid;
+  grid-template-columns:repeat(2, 1fr);
+  gap:12px;
+}
+.help-text{
+  margin-top:6px;
+  font-size:0.9rem;
+  color:var(--muted);
+}
+
+/* Buttons */
+button[type="submit"]{
+  appearance:none;
+  border:0;
+  background: linear-gradient(90deg,var(--accent), var(--accent-2));
+  color:white;
+  padding:10px 16px;
+  border-radius:12px;
+  cursor:pointer;
+  font-weight:700;
+  box-shadow: 0 12px 30px rgba(37,99,235,0.14);
+  transition:transform .12s ease, box-shadow .12s ease, opacity .12s ease;
+}
+button[type="submit"]:hover{ transform:translateY(-2px) }
+button[type="submit"]:active{ transform:translateY(0) }
+button[type="submit"][disabled]{ opacity:0.6; cursor:not-allowed }
+
+/* Cancel link */
+.cancel-link{
+  display:inline-block;
+  margin-left:12px;
+  color:var(--muted);
+  text-decoration:none;
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px solid color-mix(in srgb, var(--text) 6%, transparent);
+  background:transparent;
+}
+.cancel-link:hover{ background: color-mix(in srgb, var(--bg) 4%, transparent) }
+
+/* Small screens: stack options */
+@media (max-width:720px){
+  body{ padding:18px }
+  .options-group{ grid-template-columns:1fr }
+  .form-group{ padding:10px }
+  h1{ font-size:1.25rem }
+}
+
+/* Accessibility helpers */
+:focus{ outline-offset:3px }
+
+/* Minor utility */
+.center{ text-align:center }

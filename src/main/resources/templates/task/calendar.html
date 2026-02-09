@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>カレンダー</title>
+  <link rel="stylesheet" th:href="@{/css/calendar.css}" href="/css/calendar.css">
+</head>
+<body>
+  <header class="calendar-header">
+    <div class="calendar-title">
+      <h1 th:text="${currentDate.year} + '年 ' + ${currentDate.monthValue} + '月'">2026年 2月</h1>
+      <p class="subtitle">予定をクリックするとその日のタスクへ移動します</p>
+    </div>
+
+    <div class="calendar-controls">
+      <a th:href="@{/tasks/calendar(year=${prevYear}, month=${prevMonth})}" class="ctrl-btn" aria-label="前の月">‹ 前の月</a>
+      <a th:href="@{/tasks/calendar(year=${nextYear}, month=${nextMonth})}" class="ctrl-btn" aria-label="次の月">次の月 ›</a>
+      <a th:href="@{/tasks/ai-plan}" class="ctrl-cta" aria-label="AIに計画を作ってもらう">🤖 AIで計画を作成</a>
+    </div>
+  </header>
+
+  <main class="calendar-wrap" role="main" aria-label="月間カレンダー">
+    <table class="calendar-table" role="grid" aria-readonly="true">
+      <thead>
+        <tr>
+          <th scope="col" class="weekend">日</th>
+          <th scope="col">月</th>
+          <th scope="col">火</th>
+          <th scope="col">水</th>
+          <th scope="col">木</th>
+          <th scope="col">金</th>
+          <th scope="col" class="weekend">土</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr th:each="week : ${weeks}">
+          <td th:each="day : ${week}" class="day-cell"
+              th:classappend="(${day.inMonth} ? '' : ' other-month') + ' ' + (${day.hasTask} ? ' has-task' : ' no-task')">
+            <a th:href="@{/tasks/date/{date}(date=${day.date})}"
+               th:attr="data-date=${#temporals.format(day.date,'yyyy-MM-dd')}"
+               class="day-link">
+              <!-- 日付番号だけを視覚表示 -->
+              <span class="day-number" th:text="${#temporals.format(day.date,'d')}">1</span>
+
+              <!-- スクリーンリーダー用にフル日付を残す（視覚的には非表示） -->
+              <span class="sr-only" th:text="${#temporals.format(day.date,'yyyy-MM-dd')}">2026-02-04</span>
+
+              <div class="task-area" aria-hidden="false">
+                <div th:each="task, stat : ${day.tasks}"
+                     th:if="${stat.index < 2}"
+                     class="task-item">
+                  <span class="task-title" th:text="${task.title}">タスクタイトル</span>
+                </div>
+
+                <div th:if="${day.tasks.size() > 2}" class="more-count">
+                  <span th:text="'＋' + (${day.tasks.size()} - 2) + '件'">+3件</span>
+                </div>
+              </div>
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </main>
+</body>
+</html>

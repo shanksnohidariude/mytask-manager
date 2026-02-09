@@ -1,0 +1,107 @@
+:root{
+  --bg: #f6f9fc;
+  --card: #ffffff;
+  --muted: #6b7280;
+  --text: #0b1220;
+  --accent: #2563eb;
+  --accent-2: #06b6d4;
+  --today: #e0f2ff;
+  --other-month: #edf2f7;
+  --has-task: #fff7dd;
+  --radius: 10px;
+  --shadow: 0 8px 22px rgba(11,18,32,0.06);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg: #071025;
+    --card: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    --muted: #9aa4b2;
+    --text: #e6eef8;
+    --today: rgba(6,182,212,0.08);
+    --other-month: rgba(255,255,255,0.02);
+    --has-task: rgba(255,255,255,0.02);
+    --shadow: 0 10px 30px rgba(2,6,23,0.6);
+  }
+}
+
+html,body{height:100%;margin:0;padding:24px;background:linear-gradient(180deg,var(--bg), color-mix(in srgb,var(--bg) 92%, #ffffff00));color:var(--text);}
+
+/* Header */
+.calendar-header{
+  max-width:1100px;margin:0 auto 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.calendar-title h1{margin:0;font-size:1.4rem;font-weight:700}
+.calendar-title .subtitle{margin:4px 0 0;color:var(--muted);font-size:0.95rem}
+
+/* Controls */
+.calendar-controls{display:flex;gap:8px;align-items:center}
+.ctrl-btn{
+  padding:8px 12px;border-radius:8px;background:transparent;border:1px solid rgba(11,18,32,0.04);text-decoration:none;color:var(--muted);font-weight:600;
+}
+.ctrl-btn:hover{ background: color-mix(in srgb,var(--bg) 6%, transparent) }
+.ctrl-cta{
+  margin-left:6px;padding:8px 12px;border-radius:8px;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#fff;text-decoration:none;font-weight:700;
+  box-shadow:var(--shadow);
+}
+
+/* Calendar container */
+.calendar-wrap{max-width:1100px;margin:0 auto;background:var(--card);padding:14px;border-radius:12px;box-shadow:var(--shadow);border:1px solid color-mix(in srgb,var(--text) 6%, transparent);}
+
+/* Table resets */
+.calendar-table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:0.95rem}
+.calendar-table thead th{padding:10px 8px;background:transparent;color:var(--muted);font-weight:700;text-align:center;border-bottom:1px solid color-mix(in srgb,var(--text) 6%, transparent)}
+.calendar-table thead th.weekend{color:#1f2937}
+
+/* Day cell */
+.day-cell{width:14.2857%;height:120px;border:1px solid color-mix(in srgb,var(--text) 6%, transparent);padding:6px;vertical-align:top;position:relative;background:transparent}
+.day-cell .day-link{display:block;width:100%;height:100%;text-decoration:none;color:inherit;padding-top:22px;box-sizing:border-box;position:relative;overflow:hidden;border-radius:8px}
+.day-link:focus{outline:3px solid color-mix(in srgb,var(--accent) 18%, transparent);outline-offset:3px}
+
+/* sr-only: 視覚的には非表示だがスクリーンリーダーに残す */
+.sr-only {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0);
+  white-space: nowrap; border: 0;
+}
+
+/* Other-month dim */
+.day-cell.other-month .day-link{color:color-mix(in srgb,var(--muted) 70%, transparent);opacity:0.8;background:var(--other-month)}
+
+/* Cells with tasks or without */
+.day-cell.has-task .day-link{background:var(--has-task)}
+.day-cell.no-task .day-link{background:transparent}
+
+/* Today highlight (server can add 'today' class to day-cell for visual emphasis) */
+.day-cell.today .day-link{box-shadow:0 4px 12px rgba(6,182,212,0.12);background:var(--today);border:1px solid color-mix(in srgb,var(--accent) 30%, transparent)}
+
+/* Day number (top-left) */
+.day-number{
+  position:absolute;top:6px;left:8px;font-weight:700;font-size:0.95rem;z-index:5;background:transparent;padding:0 2px;line-height:1;
+}
+
+/* Task area (bottom area) */
+.task-area{position:absolute;left:6px;right:6px;bottom:6px;display:flex;flex-direction:column;gap:4px;align-items:flex-start;max-height:54%;overflow:hidden;z-index:2}
+.task-item{display:flex;align-items:center;gap:6px;background:transparent;padding:2px 4px;border-radius:6px;width:100%;min-height:18px}
+.task-title{font-size:12px;color:color-mix(in srgb,var(--text) 80%, transparent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.more-count{font-size:12px;color:var(--muted);padding-left:2px}
+
+/* Hover state to lift */
+.day-link:hover{transform:translateY(-4px);transition:transform .12s ease}
+
+/* Responsive: stack weeks vertically on very small screens and allow horizontal scroll */
+@media (max-width:760px){
+  .calendar-table thead { display:none; }
+  .calendar-table, .calendar-table tbody, .calendar-table tr, .calendar-table td { display:block; width:100%; }
+  .calendar-wrap{padding:10px}
+  .day-cell{display:flex;height:auto;border-radius:10px;margin-bottom:8px;padding:10px}
+  .day-number{position:static;margin-right:10px}
+  .task-area{position:static;flex:1;max-height:none}
+}
+
+/* Footer */
+.calendar-footer{max-width:1100px;margin:10px auto 0;color:var(--muted);font-size:0.9rem;text-align:left}

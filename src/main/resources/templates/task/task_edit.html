@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>タスク編集</title>
+  <link rel="stylesheet" th:href="@{/css/task_edit.css}" href="/css/task_edit.css">
+</head>
+<body>
+  <main class="page" role="main">
+    <div class="topbar">
+      <a class="back" th:href="@{/tasks/calendar}" aria-label="カレンダーに戻る">← カレンダーに戻る</a>
+      <h1 class="page-title">タスク詳細</h1>
+    </div>
+
+    <section class="card" aria-labelledby="editTaskTitle">
+      <h2 id="editTaskTitle" class="visually-hidden">タスク編集フォーム</h2>
+
+      <!-- 保存用フォーム -->
+      <form th:action="@{/tasks/save}" th:object="${task}" method="post" class="form" novalidate>
+        <input type="hidden" th:field="*{id}" />
+
+        <div class="grid">
+          <div class="field">
+            <label for="title">タイトル <span class="required" aria-hidden="true">※</span></label>
+            <input type="text" id="title" th:field="*{title}" placeholder="タスクのタイトル" required aria-required="true">
+          </div>
+
+          <div class="field">
+            <label for="dueDate">日付</label>
+            <input type="date" 
+       			   id="dueDate" 
+       			   name="dueDate"
+       			   th:value="${#temporals.format(task.dueDate, 'yyyy-MM-dd')}">
+          </div>
+
+          <div class="field">
+            <label for="dueTime">時間</label>
+            <input type="time" 
+            	   id="dueTime" 
+       			   name="dueTime"
+       			   th:value="${task.dueTime}">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="description">詳細</label>
+          <textarea id="description" th:field="*{description}" placeholder="詳細やメモを入力"></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-save" aria-label="保存">💾 保存</button>
+          <button type="button" class="btn btn-delete" onclick="deleteTask()" aria-label="削除">🗑️ 削除</button>
+          <a class="btn btn-cancel" th:href="@{/tasks/date/{date}(date=${task.dueDate})}" aria-label="キャンセルしてタスク一覧に戻る">キャンセル</a>
+        </div>
+      </form>
+
+      <!-- 削除用の隠しフォーム（フォームの外に配置） -->
+      <form id="deleteForm" th:action="@{/tasks/delete/{id}(id=${task.id})}" method="post" style="display: none;" aria-hidden="true">
+      </form>
+    </section>
+
+    <footer class="help">
+      <small>入力欄で Enter を押すとフォームが送信されます。必要なら時間を空欄にして終日のタスクにできます。</small>
+    </footer>
+  </main>
+
+  <script th:src="@{/js/task_edit.js}"></script>
+</body>
+</html>

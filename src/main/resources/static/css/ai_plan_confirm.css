@@ -1,0 +1,204 @@
+/* ai_plan_confirm.css
+   - HTML構造はそのまま（クラス名や属性を変更しません）
+   - モダンなカード風フォーム、レスポンシブ、ダークモード、アクセシビリティ強化
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+:root{
+  --bg: #f6f8fb;
+  --card: #ffffff;
+  --muted: #6b7280;
+  --text: #0b1220;
+  --accent: #2563eb;
+  --accent-2: #06b6d4;
+  --danger: #ef4444;
+  --radius: 12px;
+  --shadow: 0 10px 30px rgba(11,18,32,0.06);
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg: #071025;
+    --card: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    --muted: #9aa4b2;
+    --text: #e6eef8;
+    --shadow: 0 10px 30px rgba(2,6,23,0.6);
+  }
+}
+
+/* Page layout */
+html,body{height:100%}
+body{
+  margin:0;
+  padding:30px;
+  background: linear-gradient(180deg, var(--bg), color-mix(in srgb, var(--bg) 90%, #ffffff00));
+  color:var(--text);
+  font-size:15px;
+  line-height:1.45;
+}
+
+/* Headings */
+h1{
+  margin:0 0 16px 0;
+  font-size:1.5rem;
+  letter-spacing: -0.3px;
+}
+.goal-info{
+  margin-bottom:14px;
+  background:var(--card);
+  padding:12px 14px;
+  border-radius:10px;
+  box-shadow:var(--shadow);
+  border:1px solid color-mix(in srgb, var(--text) 6%, transparent);
+}
+.goal-info strong{ margin-right:8px }
+
+/* Task count */
+.task-count h2{
+  margin:16px 0;
+  font-size:1.05rem;
+  font-weight:600;
+}
+
+/* Form container */
+#taskForm{
+  max-width:980px;
+  margin-top:6px;
+}
+
+/* Task list wrapper */
+.task-list{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+/* Each task item: card-like but keep original order and inputs */
+.task-item{
+  background:var(--card);
+  border-radius:12px;
+  padding:12px;
+  box-shadow:var(--shadow);
+  border:1px solid color-mix(in srgb, var(--text) 6%, transparent);
+  transition:transform .12s ease, box-shadow .12s ease;
+}
+
+/* Header row inside item */
+.task-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:10px;
+}
+.task-number{
+  font-weight:700;
+  font-size:1rem;
+  color:var(--accent);
+}
+
+/* Actions (delete button) */
+.task-actions{ display:flex; gap:8px; align-items:center; }
+.btn-delete{
+  background:transparent;
+  border:1px solid color-mix(in srgb, var(--text) 6%, transparent);
+  color:var(--danger);
+  padding:6px 10px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:700;
+}
+.btn-delete:hover{
+  background: color-mix(in srgb, var(--danger) 8%, transparent);
+}
+
+/* Task field labels and inputs */
+.task-field{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  margin-bottom:10px;
+}
+.task-field label{
+  font-size:0.9rem;
+  color:var(--muted);
+  font-weight:600;
+}
+.task-field input[type="text"],
+.task-field input[type="date"],
+.task-field textarea{
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px solid color-mix(in srgb, var(--text) 6%, transparent);
+  background:transparent;
+  color:var(--text);
+  font-size:0.95rem;
+  resize:vertical;
+  min-height:40px;
+  outline:none;
+}
+.task-field input[type="text"]:focus,
+.task-field input[type="date"]:focus,
+.task-field textarea:focus{
+  box-shadow:0 6px 18px rgba(37,99,235,0.08);
+  border-color: var(--accent);
+}
+
+/* textarea: slightly larger default height */
+.task-field textarea{ min-height:86px; max-height:260px; }
+
+/* Button group at bottom */
+.button-group{
+  margin-top:14px;
+  display:flex;
+  gap:12px;
+  justify-content:flex-start;
+}
+.btn-save{
+  background: linear-gradient(90deg,var(--accent), var(--accent-2));
+  color:white;
+  border:none;
+  padding:10px 14px;
+  border-radius:10px;
+  font-weight:700;
+  cursor:pointer;
+  box-shadow: 0 10px 30px rgba(37,99,235,0.12);
+}
+.btn-save[disabled]{
+  opacity:0.56;
+  cursor:not-allowed;
+}
+.btn-cancel{
+  background:transparent;
+  border:1px solid color-mix(in srgb, var(--text) 6%, transparent);
+  padding:10px 14px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:700;
+}
+
+/* Empty fallback if all tasks removed (we add .no-tasks class via JS) */
+.no-tasks{
+  text-align:center;
+  padding:18px;
+  color:var(--muted);
+  border-radius:10px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--bg) 3%, transparent), transparent);
+}
+
+/* Responsive */
+@media (max-width:720px){
+  body{ padding:18px }
+  .task-item{ padding:10px }
+  .task-field{ margin-bottom:8px }
+  .task-header{ flex-direction:row; gap:8px }
+  .task-number{ min-width:40px }
+  .button-group{ flex-direction:column; align-items:stretch }
+}
+
+/* Accessibility */
+:focus{ outline-offset:3px }
